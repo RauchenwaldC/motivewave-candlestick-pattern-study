@@ -4,6 +4,9 @@ dist/
 *.class
 *.jar
 
+# But allow the MotiveWave SDK JAR for GitHub Actions builds
+!example/MotiveWave Studies/lib/mwave_sdk.jar
+
 # Backup files
 *.backup
 *~
@@ -34,3 +37,8 @@ __pycache__/
 # MotiveWave SDK documentation and examples (not part of this project)
 docs/
 example/
+
+# But allow the SDK JAR needed for builds
+!example/MotiveWave Studies/
+!example/MotiveWave Studies/lib/
+!example/MotiveWave Studies/lib/mwave_sdk.jar

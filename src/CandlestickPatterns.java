@@ -338,7 +338,7 @@ public class CandlestickPatterns extends Study {
                     drawPattern(index, series, settings, pattern, type);
                     // Mark only the current candle where the pattern completes
                     markedCandles.put(index, pattern);
-                    
+
                     // Emit signals for bullish and bearish patterns
                     if (type == PatternType.BULLISH) {
                         ctx.signal(index, BULLISH_PATTERN, pattern, series.getClose(index));
