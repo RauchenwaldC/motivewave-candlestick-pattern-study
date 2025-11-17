@@ -331,7 +331,96 @@ public class CandlestickPatterns extends Study {
 
         if (marker.isEnabled()) {
             var coord = new Coordinate(barTime, price);
-            addFigure(new Marker(coord, position, marker, patternName));
+            String tooltip = patternName + "\n" + getPatternMeaning(patternName);
+            addFigure(new Marker(coord, position, marker, tooltip));
+        }
+    }
+
+    // Get pattern meaning from Chart Guys definitions
+    private String getPatternMeaning(String patternName) {
+        switch (patternName) {
+            // Single-Bar Patterns - Bullish
+            case "Hammer":
+                return "Found in downtrends, signaling potential bullish reversal as buyers step in at lower prices.";
+            case "Inverted Hammer":
+                return "Appears in downtrends; potential bullish reversal signal, suggesting buyer interest despite selling pressure.";
+            case "Dragonfly Doji":
+                return "Found in downtrends; signals potential bullish reversal as buyers reject lower prices, indicating support.";
+            case "Bullish Marubozu":
+                return "Shows strong buying pressure and bullish momentum, often marking sustained upward movement.";
+            
+            // Single-Bar Patterns - Bearish
+            case "Shooting Star":
+                return "Appears in uptrends; signals potential bearish reversal as sellers step in at higher prices.";
+            case "Hanging Man":
+                return "Found in uptrends; potential bearish reversal, suggesting weakening buying interest despite initial strength.";
+            case "Gravestone Doji":
+                return "Appears in uptrends; signals potential bearish reversal, indicating resistance as sellers reject higher prices.";
+            case "Bearish Marubozu":
+                return "Shows strong selling pressure and bearish momentum, often marking the start of sustained downward movement.";
+            
+            // Single-Bar Patterns - Neutral
+            case "Doji":
+                return "Indicates indecision in the market, with neither buyers nor sellers in control.";
+            case "Long-Legged Doji":
+                return "Reflects heightened volatility and uncertainty, with neither buyers nor sellers maintaining control.";
+            case "Spinning Top":
+                return "Indicates market indecision, showing balance between buyers and sellers with neither side dominating.";
+            
+            // Double-Bar Patterns - Bullish
+            case "Bullish Engulfing":
+                return "Found in downtrends; signals potential bullish reversal as buyers overwhelm sellers.";
+            case "Bullish Harami":
+                return "Seen in downtrends, it suggests indecision, with possible bullish reversal if the following candles confirm buying strength, indicating a weakening bearish trend.";
+            case "Piercing Line":
+                return "Found in downtrends, this pattern suggests a possible bullish reversal if buying continues, as sellers lose control to buyers.";
+            case "Tweezer Bottom":
+                return "Appears in downtrends; indicates possible bullish reversal as buyers defend the same support level twice.";
+            case "Bullish Kicker":
+                return "Found after downtrends or sell-offs; suggests a sudden shift in sentiment, indicating strong buying interest and potential trend reversal.";
+            
+            // Double-Bar Patterns - Bearish
+            case "Bearish Engulfing":
+                return "Found in uptrends; signals potential bearish reversal as sellers overwhelm buyers.";
+            case "Bearish Harami":
+                return "Seen in uptrends, it suggests indecision with a potential bearish reversal if following candles confirm, indicating a weakening bullish trend.";
+            case "Dark Cloud Cover":
+                return "Found in uptrends; signals potential bearish reversal if selling continues, as buyers lose control to sellers.";
+            case "Tweezer Top":
+                return "Appears in uptrends; indicates potential bearish reversal as sellers defend the same resistance level twice.";
+            case "Bearish Kicker":
+                return "Found after uptrends; indicates a sudden sentiment shift, signaling potential trend reversal and intensified selling pressure.";
+            
+            // Triple-Bar Patterns - Bullish
+            case "Morning Star":
+                return "Appears in downtrends; signals potential bullish reversal, with the small middle candle indicating indecision, followed by strong buying.";
+            case "Morning Doji Star":
+                return "Appears in downtrends; signals potential bullish reversal, with indecision from the doji and confirmation by a strong bullish candle.";
+            case "Bullish Abandoned Baby":
+                return "Appears in downtrends; suggests a strong bullish reversal, as the middle doji shows indecision, with confirmation by a strong bullish move.";
+            case "Three White Soldiers":
+                return "Found in downtrends; signals potential trend reversal, showing sustained buying strength, often signaling the start of a bullish trend.";
+            case "Three Inside Up":
+                return "Found in downtrends; confirms potential bullish reversal, showing building buying pressure as the trend shifts upward.";
+            case "Three Outside Up":
+                return "Found in downtrends; signals a confirmed bullish reversal, as buyers gain control and sustain upward momentum.";
+            
+            // Triple-Bar Patterns - Bearish
+            case "Evening Star":
+                return "Appears in uptrends; indicates potential bearish reversal, as the small middle candle shows indecision before strong selling.";
+            case "Evening Doji Star":
+                return "Appears in uptrends; signals potential bearish reversal, as the doji suggests indecision, confirmed by strong selling on the third candle.";
+            case "Bearish Abandoned Baby":
+                return "Appears in uptrends; indicates strong bearish reversal, as indecision in the doji is followed by selling strength.";
+            case "Three Black Crows":
+                return "Found in uptrends; signals potential bearish reversal, with sustained selling pressure often marking the start of a downtrend.";
+            case "Three Inside Down":
+                return "Found in uptrends; confirms potential bearish reversal, indicating weakening bullish pressure and a possible trend shift.";
+            case "Three Outside Down":
+                return "Found in uptrends; signals a confirmed bearish reversal, as sellers gain control and sustain downward momentum.";
+            
+            default:
+                return "";
         }
     }
 
@@ -677,7 +766,7 @@ public class CandlestickPatterns extends Study {
             // Verify opposing candle colors (typically one bearish, one bullish)
             boolean firstBullish = isBullish(index - 1, series);
             boolean secondBullish = isBullish(index, series);
-            
+
             if (firstBullish != secondBullish) {
                 return "Tweezer Bottom";
             }
@@ -701,7 +790,7 @@ public class CandlestickPatterns extends Study {
             // Verify opposing candle colors (typically one bullish, one bearish)
             boolean firstBullish = isBullish(index - 1, series);
             boolean secondBullish = isBullish(index, series);
-            
+
             if (firstBullish != secondBullish) {
                 return "Tweezer Top";
             }
