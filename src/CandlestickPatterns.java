@@ -30,7 +30,7 @@ public class CandlestickPatterns extends Study {
         grp.addRow(new BooleanDescriptor("detectBullish", "Detect Bullish Patterns", true));
         grp.addRow(new BooleanDescriptor("detectBearish", "Detect Bearish Patterns", true));
         grp.addRow(new BooleanDescriptor("detectNeutral", "Detect Neutral Patterns", true));
-        
+
         grp = tab.addGroup("Pattern Complexity");
         grp.addRow(new BooleanDescriptor("detect1Bar", "Detect 1-Bar Patterns", true));
         grp.addRow(new BooleanDescriptor("detect2Bar", "Detect 2-Bar Patterns", true));
@@ -69,8 +69,8 @@ public class CandlestickPatterns extends Study {
         // Clear all figures before redrawing
         clearFigures();
 
-        // Track the last occurrence of each pattern to prevent overlaps
-        java.util.Map<String, Integer> lastPatternEndIndex = new java.util.HashMap<>();
+        // Track which pattern was marked at each candle index
+        java.util.Map<Integer, String> markedCandles = new java.util.HashMap<>();
 
         // Iterate through all bars and check for patterns
         for (int index = 3; index < series.size(); index++) {
@@ -283,33 +283,53 @@ public class CandlestickPatterns extends Study {
 
             // Only draw marker if:
             // 1. A pattern was detected, AND
-            // 2. It doesn't occur too soon after the same pattern (prevents marking
-            // continuations)
+            // 2. For bullish/bearish patterns: no prior consecutive bullish/bearish candles have this pattern marked
+            // 3. For neutral patterns: none of the candles in this pattern were already marked with it
             if (pattern != null && type != null) {
                 boolean shouldDraw = true;
 
                 // Calculate how many bars this pattern uses
                 int patternBars = getPatternBarCount(pattern);
+                int patternStartIndex = index - patternBars + 1;
 
-                // Check if this same pattern was recently detected
-                // Require at least (patternBars) candles of separation to prevent marking
-                // continuations
-                if (lastPatternEndIndex.containsKey(pattern)) {
-                    int lastEndIndex = lastPatternEndIndex.get(pattern);
-                    int barsSinceLastOccurrence = index - lastEndIndex;
-
-                    // Skip if this pattern occurs too soon after the last occurrence
-                    // This prevents marking continuations (e.g., candles 4-6 after 1-3 in same
-                    // uptrend)
-                    if (barsSinceLastOccurrence <= patternBars) {
-                        shouldDraw = false;
+                if (type == PatternType.BULLISH) {
+                    // For bullish patterns: check all preceding consecutive bullish candles
+                    // Don't mark if any of them already have this same bullish pattern
+                    for (int i = index; i >= 0; i--) {
+                        if (!isBullish(i, series)) {
+                            break; // Stop at first non-bullish candle
+                        }
+                        if (markedCandles.containsKey(i) && markedCandles.get(i).equals(pattern)) {
+                            shouldDraw = false;
+                            break;
+                        }
+                    }
+                } else if (type == PatternType.BEARISH) {
+                    // For bearish patterns: check all preceding consecutive bearish candles
+                    // Don't mark if any of them already have this same bearish pattern
+                    for (int i = index; i >= 0; i--) {
+                        if (!isBearish(i, series)) {
+                            break; // Stop at first non-bearish candle
+                        }
+                        if (markedCandles.containsKey(i) && markedCandles.get(i).equals(pattern)) {
+                            shouldDraw = false;
+                            break;
+                        }
+                    }
+                } else {
+                    // For neutral patterns: check if any candle in this pattern was already marked
+                    for (int i = patternStartIndex; i <= index; i++) {
+                        if (markedCandles.containsKey(i) && markedCandles.get(i).equals(pattern)) {
+                            shouldDraw = false;
+                            break;
+                        }
                     }
                 }
 
                 if (shouldDraw) {
                     drawPattern(index, series, settings, pattern, type);
-                    // Track the end index for this specific pattern name
-                    lastPatternEndIndex.put(pattern, index);
+                    // Mark only the current candle where the pattern completes
+                    markedCandles.put(index, pattern);
                 }
             }
 
