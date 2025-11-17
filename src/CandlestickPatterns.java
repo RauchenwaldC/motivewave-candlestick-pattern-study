@@ -13,8 +13,12 @@ import java.awt.Color;
  * Detects and highlights bullish, bearish, and neutral candlestick patterns
  * including single-bar, double-bar, and triple-bar formations.
  */
-@StudyHeader(namespace = "com.motivewave", id = "CANDLESTICK_PATTERNS", name = "Candlestick Patterns", label = "Candlestick Patterns", desc = "Detects and highlights bullish, bearish, and neutral candlestick patterns", menu = "General", overlay = true, studyOverlay = true, signals = true, requiresBarUpdates = false)
+@StudyHeader(namespace = "com.motivewave", id = "CANDLESTICK_PATTERNS", name = "Candlestick Patterns", label = "Candlestick Patterns", desc = "Detects and highlights bullish, bearish, and neutral candlestick patterns", menu = "General", overlay = true, studyOverlay = true, signals = true, requiresBarUpdates = true)
 public class CandlestickPatterns extends Study {
+
+    // Signal identifiers
+    public static final String BULLISH_PATTERN = "BULLISH_PATTERN";
+    public static final String BEARISH_PATTERN = "BEARISH_PATTERN";
 
     enum PatternType {
         BULLISH, BEARISH, NEUTRAL
@@ -52,6 +56,8 @@ public class CandlestickPatterns extends Study {
         // Runtime Descriptor
         var desc = createRD();
         desc.setLabelSettings();
+        desc.declareSignal(BULLISH_PATTERN, "Bullish Pattern Detected");
+        desc.declareSignal(BEARISH_PATTERN, "Bearish Pattern Detected");
     }
 
     @Override
@@ -283,8 +289,10 @@ public class CandlestickPatterns extends Study {
 
             // Only draw marker if:
             // 1. A pattern was detected, AND
-            // 2. For bullish/bearish patterns: no prior consecutive bullish/bearish candles have this pattern marked
-            // 3. For neutral patterns: none of the candles in this pattern were already marked with it
+            // 2. For bullish/bearish patterns: no prior consecutive bullish/bearish candles
+            // have this pattern marked
+            // 3. For neutral patterns: none of the candles in this pattern were already
+            // marked with it
             if (pattern != null && type != null) {
                 boolean shouldDraw = true;
 
@@ -330,6 +338,13 @@ public class CandlestickPatterns extends Study {
                     drawPattern(index, series, settings, pattern, type);
                     // Mark only the current candle where the pattern completes
                     markedCandles.put(index, pattern);
+                    
+                    // Emit signals for bullish and bearish patterns
+                    if (type == PatternType.BULLISH) {
+                        ctx.signal(index, BULLISH_PATTERN, pattern, series.getClose(index));
+                    } else if (type == PatternType.BEARISH) {
+                        ctx.signal(index, BEARISH_PATTERN, pattern, series.getClose(index));
+                    }
                 }
             }
 
