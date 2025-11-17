@@ -1,0 +1,920 @@
+package com.motivewave.platform.study.general;
+
+import com.motivewave.platform.sdk.common.*;
+import com.motivewave.platform.sdk.common.desc.*;
+import com.motivewave.platform.sdk.study.*;
+import com.motivewave.platform.sdk.draw.*;
+
+import java.awt.Color;
+
+/**
+ * Candlestick Pattern Recognition Study
+ * 
+ * Detects and highlights bullish, bearish, and neutral candlestick patterns
+ * including single-bar, double-bar, and triple-bar formations.
+ */
+@StudyHeader(namespace = "com.motivewave", id = "CANDLESTICK_PATTERNS", name = "Candlestick Patterns", label = "Candlestick Patterns", desc = "Detects and highlights bullish, bearish, and neutral candlestick patterns", menu = "General", overlay = true, studyOverlay = true, signals = true, requiresBarUpdates = false)
+public class CandlestickPatterns extends Study {
+
+    enum PatternType {
+        BULLISH, BEARISH, NEUTRAL
+    }
+
+    @Override
+    public void initialize(Defaults defaults) {
+        var sd = createSD();
+        var tab = sd.addTab("General");
+
+        // Pattern Detection Settings
+        var grp = tab.addGroup("Pattern Types");
+        grp.addRow(new BooleanDescriptor("detectBullish", "Detect Bullish Patterns", true));
+        grp.addRow(new BooleanDescriptor("detectBearish", "Detect Bearish Patterns", true));
+        grp.addRow(new BooleanDescriptor("detectNeutral", "Detect Neutral Patterns", true));
+
+        // Display Settings
+        tab = sd.addTab("Display");
+        grp = tab.addGroup("Markers");
+        grp.addRow(new MarkerDescriptor("bullishMarker", "Bullish Pattern",
+                Enums.MarkerType.ARROW, Enums.Size.MEDIUM,
+                new Color(34, 139, 34), defaults.getLineColor(), true, true));
+        grp.addRow(new MarkerDescriptor("bearishMarker", "Bearish Pattern",
+                Enums.MarkerType.ARROW, Enums.Size.MEDIUM,
+                new Color(220, 20, 60), defaults.getLineColor(), true, true));
+        grp.addRow(new MarkerDescriptor("neutralMarker", "Neutral Pattern",
+                Enums.MarkerType.CIRCLE, Enums.Size.MEDIUM,
+                new Color(255, 165, 0), defaults.getLineColor(), true, true));
+
+        // Runtime Descriptor
+        var desc = createRD();
+        desc.setLabelSettings();
+    }
+
+    @Override
+    protected void calculate(int index, DataContext ctx) {
+        var series = ctx.getDataSeries();
+        var settings = getSettings();
+
+        // Need at least 3 bars for triple-candlestick patterns
+        if (index < 3)
+            return;
+
+        boolean detectBullish = settings.getBoolean("detectBullish", true);
+        boolean detectBearish = settings.getBoolean("detectBearish", true);
+        boolean detectNeutral = settings.getBoolean("detectNeutral", true);
+
+        // Clear previous patterns at this index
+        clearFigures();
+
+        // Check patterns in order: triple, double, single
+        String pattern = null;
+        PatternType type = null;
+
+        // Triple-bar patterns
+        if (pattern == null && detectBullish) {
+            pattern = checkMorningStar(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkMorningDojiStar(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkBullishAbandonedBaby(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkThreeWhiteSoldiers(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkThreeInsideUp(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkThreeOutsideUp(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+
+        if (pattern == null && detectBearish) {
+            pattern = checkEveningStar(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkEveningDojiStar(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkBearishAbandonedBaby(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkThreeBlackCrows(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkThreeInsideDown(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkThreeOutsideDown(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+
+        // Double-bar patterns
+        if (pattern == null && detectBullish) {
+            pattern = checkBullishEngulfing(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkBullishHarami(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkPiercingLine(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkTweezerBottom(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkBullishKicker(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+
+        if (pattern == null && detectBearish) {
+            pattern = checkBearishEngulfing(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkBearishHarami(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkDarkCloudCover(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkTweezerTop(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkBearishKicker(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+
+        // Single-bar patterns
+        if (pattern == null && detectBullish) {
+            pattern = checkHammer(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkInvertedHammer(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkDragonflyDoji(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+        if (pattern == null && detectBullish) {
+            pattern = checkBullishMarubozu(index, series);
+            if (pattern != null)
+                type = PatternType.BULLISH;
+        }
+
+        if (pattern == null && detectBearish) {
+            pattern = checkShootingStar(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkHangingMan(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkGravestoneDoji(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+        if (pattern == null && detectBearish) {
+            pattern = checkBearishMarubozu(index, series);
+            if (pattern != null)
+                type = PatternType.BEARISH;
+        }
+
+        if (pattern == null && detectNeutral) {
+            pattern = checkDoji(index, series);
+            if (pattern != null)
+                type = PatternType.NEUTRAL;
+        }
+        if (pattern == null && detectNeutral) {
+            pattern = checkLongLeggedDoji(index, series);
+            if (pattern != null)
+                type = PatternType.NEUTRAL;
+        }
+        if (pattern == null && detectNeutral) {
+            pattern = checkSpinningTop(index, series);
+            if (pattern != null)
+                type = PatternType.NEUTRAL;
+        }
+
+        // Draw marker if pattern detected
+        if (pattern != null && type != null) {
+            drawPattern(index, series, settings, pattern, type);
+        }
+
+        series.setComplete(index);
+    }
+
+    private void drawPattern(int index, DataSeries series, Settings settings, String patternName, PatternType type) {
+        long barTime = series.getStartTime(index);
+        double price;
+        Enums.Position position;
+        MarkerInfo marker;
+
+        switch (type) {
+            case BULLISH:
+                price = series.getLow(index);
+                position = Enums.Position.BOTTOM;
+                marker = settings.getMarker("bullishMarker");
+                break;
+            case BEARISH:
+                price = series.getHigh(index);
+                position = Enums.Position.TOP;
+                marker = settings.getMarker("bearishMarker");
+                break;
+            default: // NEUTRAL
+                price = (series.getHigh(index) + series.getLow(index)) / 2.0;
+                position = Enums.Position.CENTER;
+                marker = settings.getMarker("neutralMarker");
+                break;
+        }
+
+        if (marker.isEnabled()) {
+            var coord = new Coordinate(barTime, price);
+            addFigure(new Marker(coord, position, marker, patternName));
+        }
+    }
+
+    // Helper methods for candlestick analysis
+    private boolean isBullish(int index, DataSeries series) {
+        return series.getClose(index) > series.getOpen(index);
+    }
+
+    private boolean isBearish(int index, DataSeries series) {
+        return series.getClose(index) < series.getOpen(index);
+    }
+
+    private double getBodySize(int index, DataSeries series) {
+        return Math.abs(series.getClose(index) - series.getOpen(index));
+    }
+
+    private double getUpperShadow(int index, DataSeries series) {
+        return series.getHigh(index) - Math.max(series.getOpen(index), series.getClose(index));
+    }
+
+    private double getLowerShadow(int index, DataSeries series) {
+        return Math.min(series.getOpen(index), series.getClose(index)) - series.getLow(index);
+    }
+
+    private double getRange(int index, DataSeries series) {
+        return series.getHigh(index) - series.getLow(index);
+    }
+
+    private double getAvgBodySize(int index, DataSeries series, int periods) {
+        double sum = 0;
+        int count = 0;
+        for (int i = 1; i <= periods && (index - i) >= 0; i++) {
+            sum += getBodySize(index - i, series);
+            count++;
+        }
+        return count > 0 ? sum / count : 0;
+    }
+
+    // === SINGLE-BAR PATTERNS ===
+
+    private String checkDoji(int index, DataSeries series) {
+        double bodySize = getBodySize(index, series);
+        double range = getRange(index, series);
+        if (range == 0)
+            return null;
+
+        // Body is very small relative to range
+        if (bodySize / range < 0.1) {
+            return "Doji";
+        }
+        return null;
+    }
+
+    private String checkLongLeggedDoji(int index, DataSeries series) {
+        double bodySize = getBodySize(index, series);
+        double range = getRange(index, series);
+        double upperShadow = getUpperShadow(index, series);
+        double lowerShadow = getLowerShadow(index, series);
+
+        if (range == 0)
+            return null;
+
+        // Very small body with long shadows on both sides
+        if (bodySize / range < 0.1 &&
+                upperShadow > bodySize * 2 &&
+                lowerShadow > bodySize * 2) {
+            return "Long-Legged Doji";
+        }
+        return null;
+    }
+
+    private String checkDragonflyDoji(int index, DataSeries series) {
+        double bodySize = getBodySize(index, series);
+        double range = getRange(index, series);
+        double upperShadow = getUpperShadow(index, series);
+        double lowerShadow = getLowerShadow(index, series);
+
+        if (range == 0)
+            return null;
+
+        // Very small body, long lower shadow, little/no upper shadow
+        if (bodySize / range < 0.1 &&
+                lowerShadow > range * 0.6 &&
+                upperShadow < range * 0.1) {
+            return "Dragonfly Doji";
+        }
+        return null;
+    }
+
+    private String checkGravestoneDoji(int index, DataSeries series) {
+        double bodySize = getBodySize(index, series);
+        double range = getRange(index, series);
+        double upperShadow = getUpperShadow(index, series);
+        double lowerShadow = getLowerShadow(index, series);
+
+        if (range == 0)
+            return null;
+
+        // Very small body, long upper shadow, little/no lower shadow
+        if (bodySize / range < 0.1 &&
+                upperShadow > range * 0.6 &&
+                lowerShadow < range * 0.1) {
+            return "Gravestone Doji";
+        }
+        return null;
+    }
+
+    private String checkSpinningTop(int index, DataSeries series) {
+        double bodySize = getBodySize(index, series);
+        double range = getRange(index, series);
+        double upperShadow = getUpperShadow(index, series);
+        double lowerShadow = getLowerShadow(index, series);
+
+        if (range == 0)
+            return null;
+
+        // Small body (but not doji) with relatively long shadows
+        if (bodySize / range > 0.1 && bodySize / range < 0.3 &&
+                upperShadow > bodySize &&
+                lowerShadow > bodySize) {
+            return "Spinning Top";
+        }
+        return null;
+    }
+
+    private String checkHammer(int index, DataSeries series) {
+        if (!isBullish(index, series))
+            return null;
+
+        double bodySize = getBodySize(index, series);
+        double lowerShadow = getLowerShadow(index, series);
+        double upperShadow = getUpperShadow(index, series);
+
+        // Long lower shadow (at least 2x body), small/no upper shadow
+        if (lowerShadow > bodySize * 2 && upperShadow < bodySize * 0.5) {
+            return "Hammer";
+        }
+        return null;
+    }
+
+    private String checkInvertedHammer(int index, DataSeries series) {
+        if (!isBullish(index, series))
+            return null;
+
+        double bodySize = getBodySize(index, series);
+        double upperShadow = getUpperShadow(index, series);
+        double lowerShadow = getLowerShadow(index, series);
+
+        // Long upper shadow (at least 2x body), small/no lower shadow
+        if (upperShadow > bodySize * 2 && lowerShadow < bodySize * 0.5) {
+            return "Inverted Hammer";
+        }
+        return null;
+    }
+
+    private String checkShootingStar(int index, DataSeries series) {
+        if (!isBearish(index, series))
+            return null;
+
+        double bodySize = getBodySize(index, series);
+        double upperShadow = getUpperShadow(index, series);
+        double lowerShadow = getLowerShadow(index, series);
+
+        // Long upper shadow (at least 2x body), small/no lower shadow
+        if (upperShadow > bodySize * 2 && lowerShadow < bodySize * 0.5) {
+            return "Shooting Star";
+        }
+        return null;
+    }
+
+    private String checkHangingMan(int index, DataSeries series) {
+        if (!isBearish(index, series))
+            return null;
+
+        double bodySize = getBodySize(index, series);
+        double lowerShadow = getLowerShadow(index, series);
+        double upperShadow = getUpperShadow(index, series);
+
+        // Long lower shadow (at least 2x body), small/no upper shadow
+        if (lowerShadow > bodySize * 2 && upperShadow < bodySize * 0.5) {
+            return "Hanging Man";
+        }
+        return null;
+    }
+
+    private String checkBullishMarubozu(int index, DataSeries series) {
+        if (!isBullish(index, series))
+            return null;
+
+        double bodySize = getBodySize(index, series);
+        double range = getRange(index, series);
+
+        if (range == 0)
+            return null;
+
+        // Body is almost entire range (little/no shadows)
+        if (bodySize / range > 0.95) {
+            return "Bullish Marubozu";
+        }
+        return null;
+    }
+
+    private String checkBearishMarubozu(int index, DataSeries series) {
+        if (!isBearish(index, series))
+            return null;
+
+        double bodySize = getBodySize(index, series);
+        double range = getRange(index, series);
+
+        if (range == 0)
+            return null;
+
+        // Body is almost entire range (little/no shadows)
+        if (bodySize / range > 0.95) {
+            return "Bearish Marubozu";
+        }
+        return null;
+    }
+
+    // === DOUBLE-BAR PATTERNS ===
+
+    private String checkBullishEngulfing(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Previous bar is bearish, current is bullish
+        if (!isBearish(index - 1, series) || !isBullish(index, series))
+            return null;
+
+        // Current body engulfs previous body
+        if (series.getOpen(index) <= series.getClose(index - 1) &&
+                series.getClose(index) >= series.getOpen(index - 1)) {
+            return "Bullish Engulfing";
+        }
+        return null;
+    }
+
+    private String checkBearishEngulfing(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Previous bar is bullish, current is bearish
+        if (!isBullish(index - 1, series) || !isBearish(index, series))
+            return null;
+
+        // Current body engulfs previous body
+        if (series.getOpen(index) >= series.getClose(index - 1) &&
+                series.getClose(index) <= series.getOpen(index - 1)) {
+            return "Bearish Engulfing";
+        }
+        return null;
+    }
+
+    private String checkBullishHarami(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Previous bar is bearish with large body, current is bullish with small body
+        if (!isBearish(index - 1, series) || !isBullish(index, series))
+            return null;
+
+        double prevBody = getBodySize(index - 1, series);
+        double currBody = getBodySize(index, series);
+
+        // Current body is contained within previous body
+        if (currBody < prevBody * 0.5 &&
+                series.getOpen(index) > series.getClose(index - 1) &&
+                series.getClose(index) < series.getOpen(index - 1)) {
+            return "Bullish Harami";
+        }
+        return null;
+    }
+
+    private String checkBearishHarami(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Previous bar is bullish with large body, current is bearish with small body
+        if (!isBullish(index - 1, series) || !isBearish(index, series))
+            return null;
+
+        double prevBody = getBodySize(index - 1, series);
+        double currBody = getBodySize(index, series);
+
+        // Current body is contained within previous body
+        if (currBody < prevBody * 0.5 &&
+                series.getOpen(index) < series.getClose(index - 1) &&
+                series.getClose(index) > series.getOpen(index - 1)) {
+            return "Bearish Harami";
+        }
+        return null;
+    }
+
+    private String checkPiercingLine(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Previous bar is bearish, current is bullish
+        if (!isBearish(index - 1, series) || !isBullish(index, series))
+            return null;
+
+        // Current opens below previous close, closes above midpoint of previous body
+        double prevMid = (series.getOpen(index - 1) + series.getClose(index - 1)) / 2.0;
+        if (series.getOpen(index) < series.getClose(index - 1) &&
+                series.getClose(index) > prevMid &&
+                series.getClose(index) < series.getOpen(index - 1)) {
+            return "Piercing Line";
+        }
+        return null;
+    }
+
+    private String checkDarkCloudCover(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Previous bar is bullish, current is bearish
+        if (!isBullish(index - 1, series) || !isBearish(index, series))
+            return null;
+
+        // Current opens above previous close, closes below midpoint of previous body
+        double prevMid = (series.getOpen(index - 1) + series.getClose(index - 1)) / 2.0;
+        if (series.getOpen(index) > series.getClose(index - 1) &&
+                series.getClose(index) < prevMid &&
+                series.getClose(index) > series.getOpen(index - 1)) {
+            return "Dark Cloud Cover";
+        }
+        return null;
+    }
+
+    private String checkTweezerBottom(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Two candles with similar lows
+        double lowDiff = Math.abs(series.getLow(index) - series.getLow(index - 1));
+        double avgRange = (getRange(index, series) + getRange(index - 1, series)) / 2.0;
+
+        if (avgRange == 0)
+            return null;
+
+        // Lows are very close (within 5% of average range)
+        if (lowDiff / avgRange < 0.05) {
+            return "Tweezer Bottom";
+        }
+        return null;
+    }
+
+    private String checkTweezerTop(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Two candles with similar highs
+        double highDiff = Math.abs(series.getHigh(index) - series.getHigh(index - 1));
+        double avgRange = (getRange(index, series) + getRange(index - 1, series)) / 2.0;
+
+        if (avgRange == 0)
+            return null;
+
+        // Highs are very close (within 5% of average range)
+        if (highDiff / avgRange < 0.05) {
+            return "Tweezer Top";
+        }
+        return null;
+    }
+
+    private String checkBullishKicker(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Previous bar is bearish, current is bullish
+        if (!isBearish(index - 1, series) || !isBullish(index, series))
+            return null;
+
+        // Gap up: current open is above previous open
+        if (series.getOpen(index) > series.getOpen(index - 1)) {
+            return "Bullish Kicker";
+        }
+        return null;
+    }
+
+    private String checkBearishKicker(int index, DataSeries series) {
+        if (index < 1)
+            return null;
+
+        // Previous bar is bullish, current is bearish
+        if (!isBullish(index - 1, series) || !isBearish(index, series))
+            return null;
+
+        // Gap down: current open is below previous open
+        if (series.getOpen(index) < series.getOpen(index - 1)) {
+            return "Bearish Kicker";
+        }
+        return null;
+    }
+
+    // === TRIPLE-BAR PATTERNS ===
+
+    private String checkMorningStar(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // First candle: large bearish
+        // Second candle: small body (star)
+        // Third candle: large bullish
+        if (!isBearish(index - 2, series) || !isBullish(index, series))
+            return null;
+
+        double firstBody = getBodySize(index - 2, series);
+        double secondBody = getBodySize(index - 1, series);
+        double thirdBody = getBodySize(index, series);
+
+        // Second candle has small body, gaps down from first
+        if (secondBody < firstBody * 0.3 &&
+                Math.max(series.getOpen(index - 1), series.getClose(index - 1)) < series.getClose(index - 2) &&
+                thirdBody > firstBody * 0.5) {
+            return "Morning Star";
+        }
+        return null;
+    }
+
+    private String checkEveningStar(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // First candle: large bullish
+        // Second candle: small body (star)
+        // Third candle: large bearish
+        if (!isBullish(index - 2, series) || !isBearish(index, series))
+            return null;
+
+        double firstBody = getBodySize(index - 2, series);
+        double secondBody = getBodySize(index - 1, series);
+        double thirdBody = getBodySize(index, series);
+
+        // Second candle has small body, gaps up from first
+        if (secondBody < firstBody * 0.3 &&
+                Math.min(series.getOpen(index - 1), series.getClose(index - 1)) > series.getClose(index - 2) &&
+                thirdBody > firstBody * 0.5) {
+            return "Evening Star";
+        }
+        return null;
+    }
+
+    private String checkMorningDojiStar(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // Like morning star but middle candle is a doji
+        if (!isBearish(index - 2, series) || !isBullish(index, series))
+            return null;
+
+        double secondBody = getBodySize(index - 1, series);
+        double secondRange = getRange(index - 1, series);
+
+        if (secondRange == 0)
+            return null;
+
+        // Middle candle is doji, gaps down
+        if (secondBody / secondRange < 0.1 &&
+                series.getHigh(index - 1) < series.getClose(index - 2)) {
+            return "Morning Doji Star";
+        }
+        return null;
+    }
+
+    private String checkEveningDojiStar(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // Like evening star but middle candle is a doji
+        if (!isBullish(index - 2, series) || !isBearish(index, series))
+            return null;
+
+        double secondBody = getBodySize(index - 1, series);
+        double secondRange = getRange(index - 1, series);
+
+        if (secondRange == 0)
+            return null;
+
+        // Middle candle is doji, gaps up
+        if (secondBody / secondRange < 0.1 &&
+                series.getLow(index - 1) > series.getClose(index - 2)) {
+            return "Evening Doji Star";
+        }
+        return null;
+    }
+
+    private String checkThreeWhiteSoldiers(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // Three consecutive bullish candles with higher closes
+        if (!isBullish(index - 2, series) || !isBullish(index - 1, series) || !isBullish(index, series)) {
+            return null;
+        }
+
+        // Each candle closes higher than previous
+        if (series.getClose(index - 1) > series.getClose(index - 2) &&
+                series.getClose(index) > series.getClose(index - 1)) {
+            return "Three White Soldiers";
+        }
+        return null;
+    }
+
+    private String checkThreeBlackCrows(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // Three consecutive bearish candles with lower closes
+        if (!isBearish(index - 2, series) || !isBearish(index - 1, series) || !isBearish(index, series)) {
+            return null;
+        }
+
+        // Each candle closes lower than previous
+        if (series.getClose(index - 1) < series.getClose(index - 2) &&
+                series.getClose(index) < series.getClose(index - 1)) {
+            return "Three Black Crows";
+        }
+        return null;
+    }
+
+    private String checkBullishAbandonedBaby(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // Like morning star but with gaps on both sides of middle candle
+        if (!isBearish(index - 2, series) || !isBullish(index, series))
+            return null;
+
+        double secondBody = getBodySize(index - 1, series);
+        double secondRange = getRange(index - 1, series);
+
+        if (secondRange == 0)
+            return null;
+
+        // Middle is doji, gaps down from first and up from third
+        if (secondBody / secondRange < 0.1 &&
+                series.getHigh(index - 1) < series.getLow(index - 2) &&
+                series.getHigh(index - 1) < series.getLow(index)) {
+            return "Bullish Abandoned Baby";
+        }
+        return null;
+    }
+
+    private String checkBearishAbandonedBaby(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // Like evening star but with gaps on both sides of middle candle
+        if (!isBullish(index - 2, series) || !isBearish(index, series))
+            return null;
+
+        double secondBody = getBodySize(index - 1, series);
+        double secondRange = getRange(index - 1, series);
+
+        if (secondRange == 0)
+            return null;
+
+        // Middle is doji, gaps up from first and down from third
+        if (secondBody / secondRange < 0.1 &&
+                series.getLow(index - 1) > series.getHigh(index - 2) &&
+                series.getLow(index - 1) > series.getHigh(index)) {
+            return "Bearish Abandoned Baby";
+        }
+        return null;
+    }
+
+    private String checkThreeInsideUp(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // First two candles form bullish harami, third confirms
+        if (!isBearish(index - 2, series) || !isBullish(index - 1, series) || !isBullish(index, series)) {
+            return null;
+        }
+
+        // Second is contained in first, third closes above first
+        if (series.getOpen(index - 1) > series.getClose(index - 2) &&
+                series.getClose(index - 1) < series.getOpen(index - 2) &&
+                series.getClose(index) > series.getOpen(index - 2)) {
+            return "Three Inside Up";
+        }
+        return null;
+    }
+
+    private String checkThreeInsideDown(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // First two candles form bearish harami, third confirms
+        if (!isBullish(index - 2, series) || !isBearish(index - 1, series) || !isBearish(index, series)) {
+            return null;
+        }
+
+        // Second is contained in first, third closes below first
+        if (series.getOpen(index - 1) < series.getClose(index - 2) &&
+                series.getClose(index - 1) > series.getOpen(index - 2) &&
+                series.getClose(index) < series.getOpen(index - 2)) {
+            return "Three Inside Down";
+        }
+        return null;
+    }
+
+    private String checkThreeOutsideUp(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // First two candles form bullish engulfing, third confirms
+        if (!isBearish(index - 2, series) || !isBullish(index - 1, series) || !isBullish(index, series)) {
+            return null;
+        }
+
+        // Second engulfs first, third closes higher
+        if (series.getOpen(index - 1) <= series.getClose(index - 2) &&
+                series.getClose(index - 1) >= series.getOpen(index - 2) &&
+                series.getClose(index) > series.getClose(index - 1)) {
+            return "Three Outside Up";
+        }
+        return null;
+    }
+
+    private String checkThreeOutsideDown(int index, DataSeries series) {
+        if (index < 2)
+            return null;
+
+        // First two candles form bearish engulfing, third confirms
+        if (!isBullish(index - 2, series) || !isBearish(index - 1, series) || !isBearish(index, series)) {
+            return null;
+        }
+
+        // Second engulfs first, third closes lower
+        if (series.getOpen(index - 1) >= series.getClose(index - 2) &&
+                series.getClose(index - 1) <= series.getOpen(index - 2) &&
+                series.getClose(index) < series.getClose(index - 1)) {
+            return "Three Outside Down";
+        }
+        return null;
+    }
+}

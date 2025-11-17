@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Created-By: ORB Indicator Development
+Implementation-Title: ORB Indicator
+Implementation-Version: 1.0
+Implementation-Vendor: ORB Development Team
+Specification-Title: Opening Range Breakout Indicator
+Specification-Version: 1.0
+Main-Class: com.motivewave.platform.study.general.ORBIndicator
