@@ -24,6 +24,10 @@ public class CandlestickPatterns extends Study {
         BULLISH, BEARISH, NEUTRAL
     }
 
+    enum TrendDirection {
+        UPTREND, DOWNTREND, SIDEWAYS
+    }
+
     @Override
     public void initialize(Defaults defaults) {
         var sd = createSD();
@@ -39,15 +43,22 @@ public class CandlestickPatterns extends Study {
         grp.addRow(new BooleanDescriptor("detect1Bar", "Detect 1-Bar Patterns", true));
         grp.addRow(new BooleanDescriptor("detect2Bar", "Detect 2-Bar Patterns", true));
         grp.addRow(new BooleanDescriptor("detect3Bar", "Detect 3-Bar Patterns", true));
+        grp.addRow(new BooleanDescriptor("detectConfirmation", "Detect Confirmation Patterns (Three Inside/Outside)", true));
+
+        grp = tab.addGroup("Trend Detection");
+        grp.addRow(new BooleanDescriptor("useTrendFilter", "Require Correct Trend Context", true));
+        grp.addRow(new IntegerDescriptor("fastMAPeriod", "Fast MA Period", 50, 10, 100, 1));
+        grp.addRow(new IntegerDescriptor("slowMAPeriod", "Slow MA Period", 200, 100, 300, 1));
+        grp.addRow(new DoubleDescriptor("trendThreshold", "Trend Threshold %", 0.5, 0.0, 5.0, 0.1));
 
         // Display Settings
         tab = sd.addTab("Display");
         grp = tab.addGroup("Markers");
         grp.addRow(new MarkerDescriptor("bullishMarker", "Bullish Pattern",
-                Enums.MarkerType.ARROW, Enums.Size.MEDIUM,
+                Enums.MarkerType.ARROW, Enums.Size.VERY_SMALL,
                 new Color(34, 139, 34), defaults.getLineColor(), true, true));
         grp.addRow(new MarkerDescriptor("bearishMarker", "Bearish Pattern",
-                Enums.MarkerType.ARROW, Enums.Size.MEDIUM,
+                Enums.MarkerType.ARROW, Enums.Size.VERY_SMALL,
                 new Color(220, 20, 60), defaults.getLineColor(), true, true));
         grp.addRow(new MarkerDescriptor("neutralMarker", "Neutral Pattern",
                 Enums.MarkerType.CIRCLE, Enums.Size.MEDIUM,
@@ -71,6 +82,13 @@ public class CandlestickPatterns extends Study {
         boolean detect1Bar = settings.getBoolean("detect1Bar", true);
         boolean detect2Bar = settings.getBoolean("detect2Bar", true);
         boolean detect3Bar = settings.getBoolean("detect3Bar", true);
+        boolean detectConfirmation = settings.getBoolean("detectConfirmation", true);
+
+        // Trend detection settings
+        boolean useTrendFilter = settings.getBoolean("useTrendFilter", true);
+        int fastMAPeriod = settings.getInteger("fastMAPeriod", 50);
+        int slowMAPeriod = settings.getInteger("slowMAPeriod", 200);
+        double trendThreshold = settings.getDouble("trendThreshold", 0.5);
 
         // Clear all figures before redrawing
         clearFigures();
@@ -109,12 +127,12 @@ public class CandlestickPatterns extends Study {
                     if (pattern != null)
                         type = PatternType.BULLISH;
                 }
-                if (pattern == null) {
+                if (pattern == null && detectConfirmation) {
                     pattern = checkThreeInsideUp(index, series);
                     if (pattern != null)
                         type = PatternType.BULLISH;
                 }
-                if (pattern == null) {
+                if (pattern == null && detectConfirmation) {
                     pattern = checkThreeOutsideUp(index, series);
                     if (pattern != null)
                         type = PatternType.BULLISH;
@@ -143,12 +161,12 @@ public class CandlestickPatterns extends Study {
                     if (pattern != null)
                         type = PatternType.BEARISH;
                 }
-                if (pattern == null) {
+                if (pattern == null && detectConfirmation) {
                     pattern = checkThreeInsideDown(index, series);
                     if (pattern != null)
                         type = PatternType.BEARISH;
                 }
-                if (pattern == null) {
+                if (pattern == null && detectConfirmation) {
                     pattern = checkThreeOutsideDown(index, series);
                     if (pattern != null)
                         type = PatternType.BEARISH;
@@ -296,11 +314,19 @@ public class CandlestickPatterns extends Study {
             if (pattern != null && type != null) {
                 boolean shouldDraw = true;
 
+                // Check trend context if trend filter is enabled
+                if (useTrendFilter) {
+                    TrendDirection currentTrend = getTrend(index, series, fastMAPeriod, slowMAPeriod, trendThreshold);
+                    if (!shouldDisplayPattern(pattern, currentTrend)) {
+                        shouldDraw = false;
+                    }
+                }
+
                 // Calculate how many bars this pattern uses
                 int patternBars = getPatternBarCount(pattern);
                 int patternStartIndex = index - patternBars + 1;
 
-                if (type == PatternType.BULLISH) {
+                if (shouldDraw && type == PatternType.BULLISH) {
                     // For bullish patterns: check all preceding consecutive bullish candles
                     // Don't mark if any of them already have this same bullish pattern
                     for (int i = index; i >= 0; i--) {
@@ -312,7 +338,7 @@ public class CandlestickPatterns extends Study {
                             break;
                         }
                     }
-                } else if (type == PatternType.BEARISH) {
+                } else if (shouldDraw && type == PatternType.BEARISH) {
                     // For bearish patterns: check all preceding consecutive bearish candles
                     // Don't mark if any of them already have this same bearish pattern
                     for (int i = index; i >= 0; i--) {
@@ -324,7 +350,7 @@ public class CandlestickPatterns extends Study {
                             break;
                         }
                     }
-                } else {
+                } else if (shouldDraw) {
                     // For neutral patterns: check if any candle in this pattern was already marked
                     for (int i = patternStartIndex; i <= index; i++) {
                         if (markedCandles.containsKey(i) && markedCandles.get(i).equals(pattern)) {
@@ -1148,5 +1174,131 @@ public class CandlestickPatterns extends Study {
             return "Three Outside Down";
         }
         return null;
+    }
+
+    /**
+     * Determines the current trend using dual moving average system (50/200 MA).
+     * More reliable than single MA - uses price position, MA alignment, and MA slope.
+     * 
+     * Rules:
+     * - Price above rising 200MA → uptrend
+     * - Price below falling 200MA → downtrend
+     * - Flat 200MA or conflicting signals → sideways
+     * - 50/200 alignment confirms trend strength
+     * 
+     * @param index            Current candle index
+     * @param series           Data series
+     * @param fastPeriod       Fast MA period (default 50)
+     * @param slowPeriod       Slow MA period (default 200)
+     * @param thresholdPercent Percentage threshold for trend determination
+     * @return TrendDirection (UPTREND, DOWNTREND, or SIDEWAYS)
+     */
+    private TrendDirection getTrend(int index, DataSeries series, int fastPeriod, int slowPeriod, double thresholdPercent) {
+        if (index < slowPeriod) {
+            return TrendDirection.SIDEWAYS;
+        }
+
+        // Calculate 50-period MA
+        double fastSum = 0;
+        for (int i = 0; i < fastPeriod; i++) {
+            fastSum += series.getClose(index - i);
+        }
+        double fastMA = fastSum / fastPeriod;
+
+        // Calculate 200-period MA
+        double slowSum = 0;
+        for (int i = 0; i < slowPeriod; i++) {
+            slowSum += series.getClose(index - i);
+        }
+        double slowMA = slowSum / slowPeriod;
+
+        // Calculate 200MA from 10 bars ago to determine slope
+        double slowSumPrev = 0;
+        int lookback = Math.min(10, index - slowPeriod);
+        if (index >= slowPeriod + lookback) {
+            for (int i = 0; i < slowPeriod; i++) {
+                slowSumPrev += series.getClose(index - lookback - i);
+            }
+        }
+        double slowMAPrev = (index >= slowPeriod + lookback) ? slowSumPrev / slowPeriod : slowMA;
+
+        // Get current price
+        double currentPrice = series.getClose(index);
+
+        // Calculate percentage difference from 200MA
+        double percentDiff = ((currentPrice - slowMA) / slowMA) * 100.0;
+
+        // Determine 200MA slope
+        double maSlope = slowMA - slowMAPrev;
+        boolean maRising = maSlope > 0;
+        boolean maFalling = maSlope < 0;
+        
+        // Check 50/200 MA alignment for trend confirmation
+        boolean fastAboveSlow = fastMA > slowMA;
+        boolean fastBelowSlow = fastMA < slowMA;
+
+        // Apply trend detection rules:
+        // UPTREND: Price above rising 200MA (confirmed by 50>200)
+        if (percentDiff > thresholdPercent && maRising && fastAboveSlow) {
+            return TrendDirection.UPTREND;
+        }
+        
+        // DOWNTREND: Price below falling 200MA (confirmed by 50<200)
+        if (percentDiff < -thresholdPercent && maFalling && fastBelowSlow) {
+            return TrendDirection.DOWNTREND;
+        }
+        
+        // SIDEWAYS: Flat MA, conflicting signals, or threshold not met
+        return TrendDirection.SIDEWAYS;
+    }    /**
+     * Checks if a pattern should be displayed based on trend context.
+     * 
+     * @param patternName  Name of the pattern
+     * @param currentTrend Current market trend
+     * @return true if pattern should be displayed
+     */
+    private boolean shouldDisplayPattern(String patternName, TrendDirection currentTrend) {
+        if (currentTrend == TrendDirection.SIDEWAYS) {
+            // In sideways markets, show all patterns
+            return true;
+        }
+
+        // Patterns that require downtrend (bullish reversals)
+        String[] downtrendPatterns = {
+                "Hammer", "Inverted Hammer", "Dragonfly Doji",
+                "Bullish Engulfing", "Bullish Harami", "Piercing Line", "Tweezer Bottom", "Bullish Kicker",
+                "Morning Star", "Morning Doji Star", "Bullish Abandoned Baby", "Three White Soldiers",
+                "Three Inside Up", "Three Outside Up"
+        };
+
+        // Patterns that require uptrend (bearish reversals)
+        String[] uptrendPatterns = {
+                "Shooting Star", "Hanging Man", "Gravestone Doji",
+                "Bearish Engulfing", "Bearish Harami", "Dark Cloud Cover", "Tweezer Top", "Bearish Kicker",
+                "Evening Star", "Evening Doji Star", "Bearish Abandoned Baby", "Three Black Crows",
+                "Three Inside Down", "Three Outside Down"
+        };
+
+        // Neutral patterns can appear in any trend
+        String[] neutralPatterns = {
+                "Doji", "Long-Legged Doji", "Spinning Top"
+        };
+
+        // Check if pattern requires downtrend and we're in downtrend
+        for (String p : downtrendPatterns) {
+            if (patternName.equals(p)) {
+                return currentTrend == TrendDirection.DOWNTREND;
+            }
+        }
+
+        // Check if pattern requires uptrend and we're in uptrend
+        for (String p : uptrendPatterns) {
+            if (patternName.equals(p)) {
+                return currentTrend == TrendDirection.UPTREND;
+            }
+        }
+
+        // Neutral patterns or continuation patterns (Marubozu) can appear in any trend
+        return true;
     }
 }

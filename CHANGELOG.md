@@ -1,5 +1,46 @@
 # Candlestick Patterns Study - Changelog
 
+## [1.0.1] - 2025-11-17
+
+### Added
+
+- **Intelligent Trend Detection**: Dual moving average system (50/200 MA) for reliable trend identification
+  - Fast MA Period: Configurable 50-period MA (range: 10-100)
+  - Slow MA Period: Configurable 200-period MA (range: 100-300)
+  - Trend Threshold: 0.5% default (range: 0-5%)
+  - Industry-standard approach using price position, MA slope, and MA alignment
+- **Context-Aware Pattern Filtering**: Patterns only appear in correct market trends
+  - Bullish reversals (Hammer, Morning Star, etc.) only show in downtrends
+  - Bearish reversals (Shooting Star, Evening Star, etc.) only show in uptrends
+  - Neutral patterns (Doji, Spinning Top) appear in all conditions
+- **Confirmation Patterns Toggle**: Dedicated checkbox for confirmation patterns
+  - Three Inside Up/Down
+  - Three Outside Up/Down
+  - Independent control separate from general 3-bar patterns
+
+### Changed
+
+- **Marker Sizes**: Optimized for cleaner charts
+  - Bullish/Bearish markers: MEDIUM → VERY_SMALL
+  - Neutral markers: Remain MEDIUM
+- **Trend Threshold Default**: Increased from 0.1% to 0.5% for better reliability with 200MA
+- **Pattern Tooltips**: Added pattern meanings from The Chart Guys
+
+### Improved
+
+- **Signal Quality**: Significantly reduced false signals through trend-aware filtering
+- **Trend Detection Accuracy**: Three-factor validation (price position + MA slope + MA alignment)
+- **User Control**: More granular configuration options for different market conditions and timeframes
+
+### Technical
+
+- Upgraded from single MA (20-period) to dual MA (50/200) trend detection
+- Enhanced getTrend() method with slope analysis and alignment confirmation
+- Added shouldDisplayPattern() method for intelligent pattern filtering
+- Pattern categorization by trend requirement (downtrendPatterns, uptrendPatterns, neutralPatterns)
+
+---
+
 ## [1.0.0] - 2025-11-17
 
 ### Initial Release

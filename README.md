@@ -4,6 +4,14 @@
 
 The **Candlestick Patterns Study** is a comprehensive MotiveWave study that automatically detects and highlights bullish, bearish, and neutral candlestick patterns on your charts. This study recognizes over 30 different patterns including single-bar, double-bar, and triple-bar formations with visual markers and tooltips.
 
+**Key Features:**
+- 33+ candlestick patterns with detailed tooltips
+- Intelligent trend detection using 50/200 moving averages
+- Context-aware pattern filtering (patterns only appear in correct market trends)
+- Customizable complexity controls (1-bar, 2-bar, 3-bar patterns)
+- Dedicated confirmation pattern toggle
+- Trading signal support for automated strategies
+
 ## Features
 
 ### Pattern Detection
@@ -72,14 +80,15 @@ The study detects **33+ candlestick patterns** across three categories. For deta
 
 ### Visual Elements
 
-- **Colored Arrows**: Each pattern is marked with a colored arrow
-  - Green triangles (bottom) for bullish patterns
-  - Red triangles (top) for bearish patterns
-  - Orange circles (center) for neutral patterns
-- **Tooltips**: Hover over any marker to see the pattern name and its meaning
-- **Customizable Markers**: Adjust colors, sizes, and styles
+- **Colored Markers**: Each pattern is marked with a colored marker
+  - Green triangles (bottom, very small) for bullish patterns
+  - Red triangles (top, very small) for bearish patterns
+  - Orange circles (center, medium) for neutral patterns
+- **Tooltips**: Hover over any marker to see the pattern name and its meaning from The Chart Guys
+- **Customizable Markers**: Adjust colors, sizes, and styles for each pattern type
 - **Smart Detection**: Prevents duplicate markings of the same pattern in continuous trends
-- **Signal Support**: Emits trading signals for bullish and bearish patterns that can trigger alerts or automated strategies
+- **Trend-Aware Display**: Patterns only appear when market conditions make them meaningful
+- **Signal Support**: Emits BULLISH_PATTERN and BEARISH_PATTERN signals for automated strategies
 
 ### Configuration Options
 
@@ -94,6 +103,21 @@ The study detects **33+ candlestick patterns** across three categories. For deta
 - **Detect 1-Bar Patterns**: Toggle single-bar patterns (Doji, Hammer, Marubozu, etc.)
 - **Detect 2-Bar Patterns**: Toggle double-bar patterns (Engulfing, Harami, Piercing Line, etc.)
 - **Detect 3-Bar Patterns**: Toggle triple-bar patterns (Morning/Evening Star, Three White Soldiers, etc.)
+- **Detect Confirmation Patterns**: Toggle confirmation patterns (Three Inside Up/Down, Three Outside Up/Down)
+
+#### Trend Detection
+
+- **Require Correct Trend Context**: Enable/disable trend-based pattern filtering
+- **Fast MA Period**: Fast moving average period for trend detection (default: 50)
+- **Slow MA Period**: Slow moving average period for trend detection (default: 200)
+- **Trend Threshold %**: Minimum price deviation from 200MA to confirm trend (default: 0.5%)
+
+When trend filtering is enabled, reversal patterns only appear in the correct market context:
+- **Bullish reversals** (Hammer, Morning Star, etc.) only show in **downtrends**
+- **Bearish reversals** (Shooting Star, Evening Star, etc.) only show in **uptrends**
+- **Neutral patterns** (Doji, Spinning Top) appear in all market conditions
+
+This significantly improves signal quality by preventing patterns from appearing where they lack predictive value.
 
 #### Display Settings
 
@@ -174,16 +198,25 @@ This script:
 ## Parameters
 
 | Parameter | Description | Default |
-|-----------|-------------|---------|
+|-----------|-------------|---------||
+| **Pattern Types** | | |
 | Detect Bullish Patterns | Show bullish pattern markers | true |
 | Detect Bearish Patterns | Show bearish pattern markers | true |
 | Detect Neutral Patterns | Show neutral pattern markers | true |
+| **Pattern Complexity** | | |
 | Detect 1-Bar Patterns | Show single-bar patterns | true |
 | Detect 2-Bar Patterns | Show double-bar patterns | true |
 | Detect 3-Bar Patterns | Show triple-bar patterns | true |
-| Bullish Marker | Marker style for bullish patterns | Green arrow (bottom) |
-| Bearish Marker | Marker style for bearish patterns | Red arrow (top) |
-| Neutral Marker | Marker style for neutral patterns | Orange circle (center) |
+| Detect Confirmation Patterns | Show Three Inside/Outside patterns | true |
+| **Trend Detection** | | |
+| Require Correct Trend Context | Filter patterns by market trend | true |
+| Fast MA Period | Fast moving average period | 50 |
+| Slow MA Period | Slow moving average period | 200 |
+| Trend Threshold % | Price deviation threshold | 0.5% |
+| **Display** | | |
+| Bullish Marker | Marker style for bullish patterns | Green arrow (very small, bottom) |
+| Bearish Marker | Marker style for bearish patterns | Red arrow (very small, top) |
+| Neutral Marker | Marker style for neutral patterns | Orange circle (medium, center) |
 
 ## File Structure
 
