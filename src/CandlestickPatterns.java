@@ -61,9 +61,8 @@ public class CandlestickPatterns extends Study {
         // Clear all figures before redrawing
         clearFigures();
 
-        // Track the last pattern detected to avoid repeating
-        String lastPattern = null;
-        int lastPatternIndex = -1;
+        // Track the last occurrence of each pattern to prevent overlaps
+        java.util.Map<String, Integer> lastPatternEndIndex = new java.util.HashMap<>();
 
         // Iterate through all bars and check for patterns
         for (int index = 3; index < series.size(); index++) {
@@ -276,20 +275,33 @@ public class CandlestickPatterns extends Study {
 
             // Only draw marker if:
             // 1. A pattern was detected, AND
-            // 2. It's different from the last pattern OR it's been at least 1 bar since the
-            // last occurrence
+            // 2. It doesn't occur too soon after the same pattern (prevents marking
+            // continuations)
             if (pattern != null && type != null) {
                 boolean shouldDraw = true;
 
-                // Skip if same pattern as previous candle (to avoid repetition)
-                if (pattern.equals(lastPattern) && index == lastPatternIndex + 1) {
-                    shouldDraw = false;
+                // Calculate how many bars this pattern uses
+                int patternBars = getPatternBarCount(pattern);
+
+                // Check if this same pattern was recently detected
+                // Require at least (patternBars) candles of separation to prevent marking
+                // continuations
+                if (lastPatternEndIndex.containsKey(pattern)) {
+                    int lastEndIndex = lastPatternEndIndex.get(pattern);
+                    int barsSinceLastOccurrence = index - lastEndIndex;
+
+                    // Skip if this pattern occurs too soon after the last occurrence
+                    // This prevents marking continuations (e.g., candles 4-6 after 1-3 in same
+                    // uptrend)
+                    if (barsSinceLastOccurrence <= patternBars) {
+                        shouldDraw = false;
+                    }
                 }
 
                 if (shouldDraw) {
                     drawPattern(index, series, settings, pattern, type);
-                    lastPattern = pattern;
-                    lastPatternIndex = index;
+                    // Track the end index for this specific pattern name
+                    lastPatternEndIndex.put(pattern, index);
                 }
             }
 
@@ -336,6 +348,29 @@ public class CandlestickPatterns extends Study {
         }
     }
 
+    // Helper method to determine how many bars a pattern uses
+    private int getPatternBarCount(String patternName) {
+        // Triple-bar patterns
+        if (patternName.equals("Morning Star") || patternName.equals("Evening Star") ||
+                patternName.equals("Morning Doji Star") || patternName.equals("Evening Doji Star") ||
+                patternName.equals("Bullish Abandoned Baby") || patternName.equals("Bearish Abandoned Baby") ||
+                patternName.equals("Three White Soldiers") || patternName.equals("Three Black Crows") ||
+                patternName.equals("Three Inside Up") || patternName.equals("Three Inside Down") ||
+                patternName.equals("Three Outside Up") || patternName.equals("Three Outside Down")) {
+            return 3;
+        }
+        // Double-bar patterns
+        if (patternName.equals("Bullish Engulfing") || patternName.equals("Bearish Engulfing") ||
+                patternName.equals("Bullish Harami") || patternName.equals("Bearish Harami") ||
+                patternName.equals("Piercing Line") || patternName.equals("Dark Cloud Cover") ||
+                patternName.equals("Tweezer Bottom") || patternName.equals("Tweezer Top") ||
+                patternName.equals("Bullish Kicker") || patternName.equals("Bearish Kicker")) {
+            return 2;
+        }
+        // Single-bar patterns (default)
+        return 1;
+    }
+
     // Get pattern meaning from Chart Guys definitions
     private String getPatternMeaning(String patternName) {
         switch (patternName) {
@@ -348,7 +383,7 @@ public class CandlestickPatterns extends Study {
                 return "Found in downtrends; signals potential bullish reversal as buyers reject lower prices, indicating support.";
             case "Bullish Marubozu":
                 return "Shows strong buying pressure and bullish momentum, often marking sustained upward movement.";
-            
+
             // Single-Bar Patterns - Bearish
             case "Shooting Star":
                 return "Appears in uptrends; signals potential bearish reversal as sellers step in at higher prices.";
@@ -358,7 +393,7 @@ public class CandlestickPatterns extends Study {
                 return "Appears in uptrends; signals potential bearish reversal, indicating resistance as sellers reject higher prices.";
             case "Bearish Marubozu":
                 return "Shows strong selling pressure and bearish momentum, often marking the start of sustained downward movement.";
-            
+
             // Single-Bar Patterns - Neutral
             case "Doji":
                 return "Indicates indecision in the market, with neither buyers nor sellers in control.";
@@ -366,7 +401,7 @@ public class CandlestickPatterns extends Study {
                 return "Reflects heightened volatility and uncertainty, with neither buyers nor sellers maintaining control.";
             case "Spinning Top":
                 return "Indicates market indecision, showing balance between buyers and sellers with neither side dominating.";
-            
+
             // Double-Bar Patterns - Bullish
             case "Bullish Engulfing":
                 return "Found in downtrends; signals potential bullish reversal as buyers overwhelm sellers.";
@@ -378,7 +413,7 @@ public class CandlestickPatterns extends Study {
                 return "Appears in downtrends; indicates possible bullish reversal as buyers defend the same support level twice.";
             case "Bullish Kicker":
                 return "Found after downtrends or sell-offs; suggests a sudden shift in sentiment, indicating strong buying interest and potential trend reversal.";
-            
+
             // Double-Bar Patterns - Bearish
             case "Bearish Engulfing":
                 return "Found in uptrends; signals potential bearish reversal as sellers overwhelm buyers.";
@@ -390,7 +425,7 @@ public class CandlestickPatterns extends Study {
                 return "Appears in uptrends; indicates potential bearish reversal as sellers defend the same resistance level twice.";
             case "Bearish Kicker":
                 return "Found after uptrends; indicates a sudden sentiment shift, signaling potential trend reversal and intensified selling pressure.";
-            
+
             // Triple-Bar Patterns - Bullish
             case "Morning Star":
                 return "Appears in downtrends; signals potential bullish reversal, with the small middle candle indicating indecision, followed by strong buying.";
@@ -404,7 +439,7 @@ public class CandlestickPatterns extends Study {
                 return "Found in downtrends; confirms potential bullish reversal, showing building buying pressure as the trend shifts upward.";
             case "Three Outside Up":
                 return "Found in downtrends; signals a confirmed bullish reversal, as buyers gain control and sustain upward momentum.";
-            
+
             // Triple-Bar Patterns - Bearish
             case "Evening Star":
                 return "Appears in uptrends; indicates potential bearish reversal, as the small middle candle shows indecision before strong selling.";
@@ -418,7 +453,7 @@ public class CandlestickPatterns extends Study {
                 return "Found in uptrends; confirms potential bearish reversal, indicating weakening bullish pressure and a possible trend shift.";
             case "Three Outside Down":
                 return "Found in uptrends; signals a confirmed bearish reversal, as sellers gain control and sustain downward momentum.";
-            
+
             default:
                 return "";
         }
