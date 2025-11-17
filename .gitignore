@@ -1,10 +1,9 @@
 # Build output
 build/
-dist/
 *.class
-*.jar
 
-# But allow the MotiveWave SDK JAR for GitHub Actions builds
+# Allow the pre-built JAR and SDK JAR
+!dist/CandlestickPatterns.jar
 !example/MotiveWave Studies/lib/mwave_sdk.jar
 
 # Backup files

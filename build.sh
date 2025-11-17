@@ -17,7 +17,7 @@ SRC_DIR="$PROJECT_DIR/src"
 BUILD_DIR="$PROJECT_DIR/build"
 CLASSES_DIR="$BUILD_DIR/classes"
 DIST_DIR="$PROJECT_DIR/dist"
-JAR_FILE="$DIST_DIR/CandlestickPatterns-1.0.0.jar"
+JAR_FILE="$DIST_DIR/CandlestickPatterns.jar"
 MANIFEST="$PROJECT_DIR/MANIFEST.MF"
 
 # MotiveWave SDK path (update this to your MotiveWave installation)
