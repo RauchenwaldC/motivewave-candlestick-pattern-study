@@ -79,6 +79,7 @@ The study detects **33+ candlestick patterns** across three categories. For deta
 - **Tooltips**: Hover over any marker to see the pattern name and its meaning
 - **Customizable Markers**: Adjust colors, sizes, and styles
 - **Smart Detection**: Prevents duplicate markings of the same pattern in continuous trends
+- **Signal Support**: Emits trading signals for bullish and bearish patterns that can trigger alerts or automated strategies
 
 ### Configuration Options
 
@@ -168,8 +169,30 @@ Candlestick-Patterns/
 - **Study ID**: `CANDLESTICK_PATTERNS`
 - **Menu Location**: General
 - **Overlay**: Yes (displays on price chart)
-- **Signal Support**: Yes (pattern detection events)
-- **Bar Updates Required**: No
+- **Signal Support**: Yes (emits BULLISH_PATTERN and BEARISH_PATTERN signals)
+- **Bar Updates Required**: Yes (for real-time pattern detection)
+
+## Signals
+
+The study emits two types of signals that can be used for alerts and automated trading:
+
+### BULLISH_PATTERN
+
+- **Triggered**: When a bullish candlestick pattern is detected
+- **Data**: Pattern name and closing price
+- **Use Cases**: Long entry signals, bullish reversal alerts, trend confirmation
+
+### BEARISH_PATTERN
+
+- **Triggered**: When a bearish candlestick pattern is detected
+- **Data**: Pattern name and closing price
+- **Use Cases**: Short entry signals, bearish reversal alerts, exit signals
+
+To use signals:
+
+1. Right-click on the study → Signals
+2. Enable "BULLISH_PATTERN" and/or "BEARISH_PATTERN"
+3. Configure alerts or connect to trading strategies
 
 ## Pattern Recognition Logic
 
