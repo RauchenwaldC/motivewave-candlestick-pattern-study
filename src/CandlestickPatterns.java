@@ -30,6 +30,11 @@ public class CandlestickPatterns extends Study {
         grp.addRow(new BooleanDescriptor("detectBullish", "Detect Bullish Patterns", true));
         grp.addRow(new BooleanDescriptor("detectBearish", "Detect Bearish Patterns", true));
         grp.addRow(new BooleanDescriptor("detectNeutral", "Detect Neutral Patterns", true));
+        
+        grp = tab.addGroup("Pattern Complexity");
+        grp.addRow(new BooleanDescriptor("detect1Bar", "Detect 1-Bar Patterns", true));
+        grp.addRow(new BooleanDescriptor("detect2Bar", "Detect 2-Bar Patterns", true));
+        grp.addRow(new BooleanDescriptor("detect3Bar", "Detect 3-Bar Patterns", true));
 
         // Display Settings
         tab = sd.addTab("Display");
@@ -57,6 +62,9 @@ public class CandlestickPatterns extends Study {
         boolean detectBullish = settings.getBoolean("detectBullish", true);
         boolean detectBearish = settings.getBoolean("detectBearish", true);
         boolean detectNeutral = settings.getBoolean("detectNeutral", true);
+        boolean detect1Bar = settings.getBoolean("detect1Bar", true);
+        boolean detect2Bar = settings.getBoolean("detect2Bar", true);
+        boolean detect3Bar = settings.getBoolean("detect3Bar", true);
 
         // Clear all figures before redrawing
         clearFigures();
@@ -74,7 +82,7 @@ public class CandlestickPatterns extends Study {
             // === TRIPLE-BAR PATTERNS (HIGHEST PRIORITY) ===
 
             // Bullish triple-bar patterns
-            if (detectBullish) {
+            if (detectBullish && detect3Bar) {
                 if (pattern == null) {
                     pattern = checkMorningStar(index, series);
                     if (pattern != null)
@@ -108,7 +116,7 @@ public class CandlestickPatterns extends Study {
             }
 
             // Bearish triple-bar patterns
-            if (detectBearish) {
+            if (detectBearish && detect3Bar) {
                 if (pattern == null) {
                     pattern = checkEveningStar(index, series);
                     if (pattern != null)
@@ -144,7 +152,7 @@ public class CandlestickPatterns extends Study {
             // === DOUBLE-BAR PATTERNS (MEDIUM PRIORITY) ===
 
             // Bullish double-bar patterns
-            if (detectBullish && pattern == null) {
+            if (detectBullish && detect2Bar && pattern == null) {
                 if (pattern == null) {
                     pattern = checkBullishEngulfing(index, series);
                     if (pattern != null)
@@ -173,7 +181,7 @@ public class CandlestickPatterns extends Study {
             }
 
             // Bearish double-bar patterns
-            if (detectBearish && pattern == null) {
+            if (detectBearish && detect2Bar && pattern == null) {
                 if (pattern == null) {
                     pattern = checkBearishEngulfing(index, series);
                     if (pattern != null)
@@ -204,7 +212,7 @@ public class CandlestickPatterns extends Study {
             // === SINGLE-BAR PATTERNS (LOWEST PRIORITY) ===
 
             // Bullish single-bar patterns
-            if (detectBullish && pattern == null) {
+            if (detectBullish && detect1Bar && pattern == null) {
                 // More specific doji patterns first
                 if (pattern == null) {
                     pattern = checkDragonflyDoji(index, series);
@@ -229,7 +237,7 @@ public class CandlestickPatterns extends Study {
             }
 
             // Bearish single-bar patterns
-            if (detectBearish && pattern == null) {
+            if (detectBearish && detect1Bar && pattern == null) {
                 // More specific doji patterns first
                 if (pattern == null) {
                     pattern = checkGravestoneDoji(index, series);
@@ -254,7 +262,7 @@ public class CandlestickPatterns extends Study {
             }
 
             // Neutral single-bar patterns (check these last)
-            if (detectNeutral && pattern == null) {
+            if (detectNeutral && detect1Bar && pattern == null) {
                 // More specific doji patterns first
                 if (pattern == null) {
                     pattern = checkLongLeggedDoji(index, series);
