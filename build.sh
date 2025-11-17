@@ -59,7 +59,6 @@ echo ""
 echo "🔨 Compiling Java sources..."
 javac -cp "$MOTIVEWAVE_JAR" \
       -d "$CLASSES_DIR" \
-      -source 11 -target 11 \
       "$SRC_DIR"/*.java
 
 if [ $? -eq 0 ]; then
