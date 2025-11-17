@@ -76,14 +76,29 @@ The study detects **33+ candlestick patterns** across three categories. For deta
   - Green triangles (bottom) for bullish patterns
   - Red triangles (top) for bearish patterns
   - Orange circles (center) for neutral patterns
-- **Tooltips**: Hover over any marker to see the pattern name
+- **Tooltips**: Hover over any marker to see the pattern name and its meaning
 - **Customizable Markers**: Adjust colors, sizes, and styles
+- **Smart Detection**: Prevents duplicate markings of the same pattern in continuous trends
 
 ### Configuration Options
 
-- **Pattern Detection**: Enable/disable bullish, bearish, or neutral pattern detection
-- **Marker Customization**: Change colors, sizes, and styles for each pattern type
-- **Visual Settings**: Customize the appearance of all markers
+#### Pattern Types
+
+- **Detect Bullish Patterns**: Enable/disable bullish pattern detection
+- **Detect Bearish Patterns**: Enable/disable bearish pattern detection
+- **Detect Neutral Patterns**: Enable/disable neutral pattern detection
+
+#### Pattern Complexity
+
+- **Detect 1-Bar Patterns**: Toggle single-bar patterns (Doji, Hammer, Marubozu, etc.)
+- **Detect 2-Bar Patterns**: Toggle double-bar patterns (Engulfing, Harami, Piercing Line, etc.)
+- **Detect 3-Bar Patterns**: Toggle triple-bar patterns (Morning/Evening Star, Three White Soldiers, etc.)
+
+#### Display Settings
+
+- **Bullish Marker**: Customize color, size, and style for bullish patterns
+- **Bearish Marker**: Customize color, size, and style for bearish patterns
+- **Neutral Marker**: Customize color, size, and style for neutral patterns
 
 ## Installation
 
@@ -126,13 +141,16 @@ The study detects **33+ candlestick patterns** across three categories. For deta
 | Detect Bullish Patterns | Show bullish pattern markers | true |
 | Detect Bearish Patterns | Show bearish pattern markers | true |
 | Detect Neutral Patterns | Show neutral pattern markers | true |
-| Bullish Marker | Marker style for bullish patterns | Green triangle |
-| Bearish Marker | Marker style for bearish patterns | Red triangle |
-| Neutral Marker | Marker style for neutral patterns | Orange circle |
+| Detect 1-Bar Patterns | Show single-bar patterns | true |
+| Detect 2-Bar Patterns | Show double-bar patterns | true |
+| Detect 3-Bar Patterns | Show triple-bar patterns | true |
+| Bullish Marker | Marker style for bullish patterns | Green arrow (bottom) |
+| Bearish Marker | Marker style for bearish patterns | Red arrow (top) |
+| Neutral Marker | Marker style for neutral patterns | Orange circle (center) |
 
 ## File Structure
 
-```
+```text
 Candlestick-Patterns/
 ├── src/
 │   └── CandlestickPatterns.java  # Main study implementation
