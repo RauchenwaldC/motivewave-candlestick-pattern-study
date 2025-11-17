@@ -26,11 +26,20 @@ MANIFEST="$PROJECT_DIR/MANIFEST.MF"
 #   Linux: ~/MotiveWave/mwave_sdk.jar
 #   Windows: C:\Program Files\MotiveWave\mwave_sdk.jar
 
-MOTIVEWAVE_JAR="$PROJECT_DIR/example/MotiveWave Studies/lib/mwave_sdk.jar"
+# Try common locations
+if [ -f "/Applications/MotiveWave.app/Contents/Java/mwave_sdk.jar" ]; then
+    MOTIVEWAVE_JAR="/Applications/MotiveWave.app/Contents/Java/mwave_sdk.jar"
+elif [ -f "$HOME/MotiveWave/mwave_sdk.jar" ]; then
+    MOTIVEWAVE_JAR="$HOME/MotiveWave/mwave_sdk.jar"
+elif [ -f "/opt/MotiveWave/mwave_sdk.jar" ]; then
+    MOTIVEWAVE_JAR="/opt/MotiveWave/mwave_sdk.jar"
+else
+    MOTIVEWAVE_JAR=""
+fi
 
 # Check if MotiveWave JAR exists
-if [ ! -f "$MOTIVEWAVE_JAR" ]; then
-    echo "❌ ERROR: MotiveWave SDK JAR not found at: $MOTIVEWAVE_JAR"
+if [ -z "$MOTIVEWAVE_JAR" ] || [ ! -f "$MOTIVEWAVE_JAR" ]; then
+    echo "❌ ERROR: MotiveWave SDK JAR not found"
     echo ""
     echo "Please update MOTIVEWAVE_JAR variable in this script to point to your MotiveWave installation."
     echo ""

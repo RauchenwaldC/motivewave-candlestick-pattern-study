@@ -2,9 +2,8 @@
 build/
 *.class
 
-# Allow the pre-built JAR and SDK JAR
+# Allow the pre-built JAR in dist/
 !dist/CandlestickPatterns.jar
-!example/MotiveWave Studies/lib/mwave_sdk.jar
 
 # Backup files
 *.backup
@@ -36,8 +35,3 @@ __pycache__/
 # MotiveWave SDK documentation and examples (not part of this project)
 docs/
 example/
-
-# But allow the SDK JAR needed for builds
-!example/MotiveWave Studies/
-!example/MotiveWave Studies/lib/
-!example/MotiveWave Studies/lib/mwave_sdk.jar

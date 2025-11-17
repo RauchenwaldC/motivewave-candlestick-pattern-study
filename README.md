@@ -103,10 +103,11 @@ The study detects **33+ candlestick patterns** across three categories. For deta
 
 ## Installation
 
-### Quick Install (Recommended)
+### Download from GitHub Releases (Recommended)
 
 1. **Download the JAR file**:
-   - Download [`CandlestickPatterns.jar`](dist/CandlestickPatterns.jar) directly from this repository
+   - Go to [Releases](https://github.com/RauchenwaldC/motivewave-candlestick-pattern-study/releases)
+   - Download `CandlestickPatterns.jar` from the latest release
 
 2. **Import into MotiveWave**:
    - Open MotiveWave
@@ -124,7 +125,11 @@ The study detects **33+ candlestick patterns** across three categories. For deta
 
 If you want to modify the study or build it yourself:
 
-1. **Build the JAR**:
+1. **Prerequisites**:
+   - Java 21 or higher
+   - MotiveWave installed on your system
+
+2. **Build the JAR**:
 
    ```bash
    chmod +x build.sh
@@ -133,7 +138,7 @@ If you want to modify the study or build it yourself:
 
    The JAR will be created in `dist/CandlestickPatterns.jar`
 
-2. **Import to MotiveWave** (same as above):
+3. **Import to MotiveWave** (same as above):
    - Study → All Studies → Import → Select the JAR from `dist/` folder
 
 ### Development & Testing
