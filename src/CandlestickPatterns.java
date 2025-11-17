@@ -48,217 +48,251 @@ public class CandlestickPatterns extends Study {
         var desc = createRD();
         desc.setLabelSettings();
     }
-    
+
     @Override
     protected void calculateValues(DataContext ctx) {
         var series = ctx.getDataSeries();
         var settings = getSettings();
-        
+
         boolean detectBullish = settings.getBoolean("detectBullish", true);
         boolean detectBearish = settings.getBoolean("detectBearish", true);
         boolean detectNeutral = settings.getBoolean("detectNeutral", true);
-        
+
         // Clear all figures before redrawing
         clearFigures();
-        
+
         // Track the last pattern detected to avoid repeating
         String lastPattern = null;
         int lastPatternIndex = -1;
-        
+
         // Iterate through all bars and check for patterns
         for (int index = 3; index < series.size(); index++) {
             // Check patterns in order of priority: triple, double, single
             // This ensures more complex/specific patterns take precedence
             String pattern = null;
             PatternType type = null;
-            
+
             // === TRIPLE-BAR PATTERNS (HIGHEST PRIORITY) ===
-            
+
             // Bullish triple-bar patterns
             if (detectBullish) {
                 if (pattern == null) {
                     pattern = checkMorningStar(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkMorningDojiStar(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkBullishAbandonedBaby(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkThreeWhiteSoldiers(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkThreeInsideUp(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkThreeOutsideUp(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
             }
-            
+
             // Bearish triple-bar patterns
             if (detectBearish) {
                 if (pattern == null) {
                     pattern = checkEveningStar(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkEveningDojiStar(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkBearishAbandonedBaby(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkThreeBlackCrows(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkThreeInsideDown(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkThreeOutsideDown(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
             }
-            
+
             // === DOUBLE-BAR PATTERNS (MEDIUM PRIORITY) ===
-            
+
             // Bullish double-bar patterns
             if (detectBullish && pattern == null) {
                 if (pattern == null) {
                     pattern = checkBullishEngulfing(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkBullishHarami(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkPiercingLine(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkTweezerBottom(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkBullishKicker(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
             }
-            
+
             // Bearish double-bar patterns
             if (detectBearish && pattern == null) {
                 if (pattern == null) {
                     pattern = checkBearishEngulfing(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkBearishHarami(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkDarkCloudCover(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkTweezerTop(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkBearishKicker(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
             }
-            
+
             // === SINGLE-BAR PATTERNS (LOWEST PRIORITY) ===
-            
+
             // Bullish single-bar patterns
             if (detectBullish && pattern == null) {
                 // More specific doji patterns first
                 if (pattern == null) {
                     pattern = checkDragonflyDoji(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkHammer(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkInvertedHammer(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
                 if (pattern == null) {
                     pattern = checkBullishMarubozu(index, series);
-                    if (pattern != null) type = PatternType.BULLISH;
+                    if (pattern != null)
+                        type = PatternType.BULLISH;
                 }
             }
-            
+
             // Bearish single-bar patterns
             if (detectBearish && pattern == null) {
                 // More specific doji patterns first
                 if (pattern == null) {
                     pattern = checkGravestoneDoji(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkShootingStar(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkHangingMan(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
                 if (pattern == null) {
                     pattern = checkBearishMarubozu(index, series);
-                    if (pattern != null) type = PatternType.BEARISH;
+                    if (pattern != null)
+                        type = PatternType.BEARISH;
                 }
             }
-            
+
             // Neutral single-bar patterns (check these last)
             if (detectNeutral && pattern == null) {
                 // More specific doji patterns first
                 if (pattern == null) {
                     pattern = checkLongLeggedDoji(index, series);
-                    if (pattern != null) type = PatternType.NEUTRAL;
+                    if (pattern != null)
+                        type = PatternType.NEUTRAL;
                 }
                 if (pattern == null) {
                     pattern = checkDoji(index, series);
-                    if (pattern != null) type = PatternType.NEUTRAL;
+                    if (pattern != null)
+                        type = PatternType.NEUTRAL;
                 }
                 if (pattern == null) {
                     pattern = checkSpinningTop(index, series);
-                    if (pattern != null) type = PatternType.NEUTRAL;
+                    if (pattern != null)
+                        type = PatternType.NEUTRAL;
                 }
             }
-            
+
             // Only draw marker if:
             // 1. A pattern was detected, AND
-            // 2. It's different from the last pattern OR it's been at least 1 bar since the last occurrence
+            // 2. It's different from the last pattern OR it's been at least 1 bar since the
+            // last occurrence
             if (pattern != null && type != null) {
                 boolean shouldDraw = true;
-                
+
                 // Skip if same pattern as previous candle (to avoid repetition)
                 if (pattern.equals(lastPattern) && index == lastPatternIndex + 1) {
                     shouldDraw = false;
                 }
-                
+
                 if (shouldDraw) {
                     drawPattern(index, series, settings, pattern, type);
                     lastPattern = pattern;
                     lastPatternIndex = index;
                 }
             }
-            
+
             series.setComplete(index);
         }
     }
@@ -640,7 +674,13 @@ public class CandlestickPatterns extends Study {
 
         // Lows are very close (within 5% of average range)
         if (lowDiff / avgRange < 0.05) {
-            return "Tweezer Bottom";
+            // Verify opposing candle colors (typically one bearish, one bullish)
+            boolean firstBullish = isBullish(index - 1, series);
+            boolean secondBullish = isBullish(index, series);
+            
+            if (firstBullish != secondBullish) {
+                return "Tweezer Bottom";
+            }
         }
         return null;
     }
@@ -658,7 +698,13 @@ public class CandlestickPatterns extends Study {
 
         // Highs are very close (within 5% of average range)
         if (highDiff / avgRange < 0.05) {
-            return "Tweezer Top";
+            // Verify opposing candle colors (typically one bullish, one bearish)
+            boolean firstBullish = isBullish(index - 1, series);
+            boolean secondBullish = isBullish(index, series);
+            
+            if (firstBullish != secondBullish) {
+                return "Tweezer Top";
+            }
         }
         return null;
     }
