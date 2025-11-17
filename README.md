@@ -103,36 +103,68 @@ The study detects **33+ candlestick patterns** across three categories. For deta
 
 ## Installation
 
-### Using build.sh (Recommended)
+### Download from GitHub Releases (Recommended)
 
-1. Run the build script:
+1. **Download the JAR file**:
+   - Go to [Releases](https://github.com/RauchenwaldC/motivewave-candlestick-pattern-study/releases)
+   - Download `CandlestickPatterns-1.0.0.jar` from the latest release
+
+2. **Import into MotiveWave**:
+   - Open MotiveWave
+   - Click **Study** menu in the top menu bar
+   - Select **All Studies**
+   - Click **Import** button in the dialog
+   - Navigate to and select the downloaded JAR file
+   - Click **OK**
+
+3. **Add to Chart**:
+   - In the **All Studies** dialog, search for "Candlestick Patterns"
+   - Select it and click **Add** to add it to your chart
+
+### Building from Source
+
+If you want to modify the study or build it yourself:
+
+1. **Build the JAR**:
 
    ```bash
    chmod +x build.sh
    ./build.sh
    ```
 
-2. Copy the JAR file to MotiveWave:
+   The JAR will be created in `dist/CandlestickPatterns-1.0.0.jar`
 
-   ```bash
-   cp dist/CandlestickPatterns-1.0.0.jar ~/MotiveWave/extensions/
-   ```
+2. **Import to MotiveWave** (same as above):
+   - Study → All Studies → Import → Select the JAR from `dist/` folder
 
-3. Restart MotiveWave
+### Development & Testing
 
-### Manual Installation
+For rapid development iteration:
 
-1. Compile the study using MotiveWave's study compilation process
-2. Place the compiled JAR in your MotiveWave extensions directory
-3. Restart MotiveWave to load the new study
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+This script:
+
+- Compiles the study
+- Deploys directly to `~/MotiveWave Extensions/dev/`
+- MotiveWave automatically reloads the study (if running)
+- Ideal for testing changes without manual import/restart
 
 ## Usage
 
-1. **Add Study**: Right-click chart → Studies → General → Candlestick Patterns
+1. **Add Study to Chart**:
+   - Study menu → All Studies
+   - Search for "Candlestick Patterns"
+   - Click **Add**
+
 2. **Configure Settings**:
+   - Right-click the study on chart → Edit Study
    - Enable/disable pattern types (bullish, bearish, neutral)
+   - Toggle pattern complexity (1-bar, 2-bar, 3-bar patterns)
    - Customize marker colors and sizes
-   - Adjust visual appearance
 3. **Analyze**: Patterns are automatically detected and displayed with tooltips
 
 ## Parameters
@@ -206,14 +238,76 @@ The study uses sophisticated algorithms to identify patterns based on:
 
 Each pattern is checked according to traditional candlestick analysis rules as documented in the [Chart Guys Candlestick Pattern Cheat Sheet](https://www.chartguys.com/candlestick-pattern-cheat-sheet).
 
+## Contributing
+
+Contributions are welcome! Here's how you can help:
+
+### Reporting Issues
+
+If you encounter bugs or have feature requests:
+
+1. Check [existing issues](https://github.com/RauchenwaldC/motivewave-candlestick-pattern-study/issues) first
+2. Create a new issue using the issue template
+3. Provide detailed information:
+   - MotiveWave version
+   - Study version
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Screenshots if applicable
+
+### Submitting Changes
+
+1. **Fork the repository**
+2. **Create a feature branch**:
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make your changes**:
+   - Follow existing code style
+   - Test thoroughly using `./deploy.sh`
+   - Update documentation if needed
+
+4. **Commit your changes**:
+
+   ```bash
+   git commit -m "Add: description of your changes"
+   ```
+
+5. **Push and create a Pull Request**:
+
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+### Development Guidelines
+
+- Test all pattern detection changes on various chart timeframes
+- Ensure backward compatibility with existing configurations
+- Document any new settings or features in README.md
+- Update CHANGELOG.md with your changes
+
 ## Version History
 
 See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ## License
 
-This study is provided as-is for use with MotiveWave platform. See MotiveWave license terms for usage rights.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+This means you are free to use, modify, and distribute this study, even for commercial purposes, with proper attribution.
 
 ## Support
 
-For issues or questions about this study, please refer to the MotiveWave documentation or community forums.
+**Note**: This is an open-source project provided as-is without official support.
+
+### Getting Help
+
+- **Documentation**: Check this README and [PATTERNS.md](PATTERNS.md)
+- **Issues**: Report bugs via [GitHub Issues](https://github.com/RauchenwaldC/motivewave-candlestick-pattern-study/issues)
+- **MotiveWave**: For platform-specific questions, consult [MotiveWave documentation](https://www.motivewave.com/support.htm)
+
+### No Warranty
+
+This software is provided "as is", without warranty of any kind. Use at your own risk.
