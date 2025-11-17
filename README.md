@@ -8,67 +8,67 @@ The **Candlestick Patterns Study** is a comprehensive MotiveWave study that auto
 
 ### Pattern Detection
 
-The study detects the following categories of patterns:
+The study detects **33+ candlestick patterns** across three categories. For detailed descriptions of each pattern, see [PATTERNS.md](PATTERNS.md).
 
 #### Single-Bar Patterns
 
 **Bullish:**
 
-- Hammer
-- Inverted Hammer
-- Dragonfly Doji
-- Bullish Marubozu
+- [Hammer](PATTERNS.md#1-hammer)
+- [Inverted Hammer](PATTERNS.md#2-inverted-hammer)
+- [Dragonfly Doji](PATTERNS.md#3-dragonfly-doji)
+- [Bullish Marubozu](PATTERNS.md#4-bullish-marubozu)
 
 **Bearish:**
 
-- Shooting Star
-- Hanging Man
-- Gravestone Doji
-- Bearish Marubozu
+- [Shooting Star](PATTERNS.md#5-shooting-star)
+- [Hanging Man](PATTERNS.md#6-hanging-man)
+- [Gravestone Doji](PATTERNS.md#7-gravestone-doji)
+- [Bearish Marubozu](PATTERNS.md#8-bearish-marubozu)
 
 **Neutral:**
 
-- Doji
-- Long-Legged Doji
-- Spinning Top
+- [Doji](PATTERNS.md#9-doji)
+- [Long-Legged Doji](PATTERNS.md#10-long-legged-doji)
+- [Spinning Top](PATTERNS.md#11-spinning-top)
 
 #### Double-Bar Patterns
 
 **Bullish:**
 
-- Bullish Engulfing
-- Bullish Harami
-- Piercing Line
-- Tweezer Bottom
-- Bullish Kicker
+- [Bullish Engulfing](PATTERNS.md#12-bullish-engulfing)
+- [Bullish Harami](PATTERNS.md#13-bullish-harami)
+- [Piercing Line](PATTERNS.md#14-piercing-line)
+- [Tweezer Bottom](PATTERNS.md#15-tweezer-bottom)
+- [Bullish Kicker](PATTERNS.md#16-bullish-kicker)
 
 **Bearish:**
 
-- Bearish Engulfing
-- Bearish Harami
-- Dark Cloud Cover
-- Tweezer Top
-- Bearish Kicker
+- [Bearish Engulfing](PATTERNS.md#17-bearish-engulfing)
+- [Bearish Harami](PATTERNS.md#18-bearish-harami)
+- [Dark Cloud Cover](PATTERNS.md#19-dark-cloud-cover)
+- [Tweezer Top](PATTERNS.md#20-tweezer-top)
+- [Bearish Kicker](PATTERNS.md#21-bearish-kicker)
 
 #### Triple-Bar Patterns
 
 **Bullish:**
 
-- Morning Star
-- Morning Doji Star
-- Bullish Abandoned Baby
-- Three White Soldiers
-- Three Inside Up
-- Three Outside Up
+- [Morning Star](PATTERNS.md#22-morning-star)
+- [Morning Doji Star](PATTERNS.md#23-morning-doji-star)
+- [Bullish Abandoned Baby](PATTERNS.md#24-bullish-abandoned-baby)
+- [Three White Soldiers](PATTERNS.md#25-three-white-soldiers)
+- [Three Inside Up](PATTERNS.md#26-three-inside-up)
+- [Three Outside Up](PATTERNS.md#27-three-outside-up)
 
 **Bearish:**
 
-- Evening Star
-- Evening Doji Star
-- Bearish Abandoned Baby
-- Three Black Crows
-- Three Inside Down
-- Three Outside Down
+- [Evening Star](PATTERNS.md#28-evening-star)
+- [Evening Doji Star](PATTERNS.md#29-evening-doji-star)
+- [Bearish Abandoned Baby](PATTERNS.md#30-bearish-abandoned-baby)
+- [Three Black Crows](PATTERNS.md#31-three-black-crows)
+- [Three Inside Down](PATTERNS.md#32-three-inside-down)
+- [Three Outside Down](PATTERNS.md#33-three-outside-down)
 
 ### Visual Elements
 
@@ -136,12 +136,11 @@ The study detects the following categories of patterns:
 Candlestick-Patterns/
 ├── src/
 │   └── CandlestickPatterns.java  # Main study implementation
-├── docs/                          # MotiveWave SDK documentation
-├── example/                       # MotiveWave study examples
 ├── build.sh                       # Build script
 ├── deploy.sh                      # Development deployment script
 ├── MANIFEST.MF                    # JAR manifest file
 ├── CHANGELOG.md                   # Version history
+├── PATTERNS.md                    # Detailed pattern reference guide
 └── README.md                      # This file
 ```
 
