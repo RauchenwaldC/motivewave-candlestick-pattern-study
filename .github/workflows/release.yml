@@ -16,8 +16,8 @@ jobs:
             - name: Set up JDK 24
               uses: actions/setup-java@v4
               with:
-                  java-version: "24"
-                  distribution: "temurin"
+                  java-version: "24-ea"
+                  distribution: "oracle"
 
             - name: Extract version from tag
               id: get_version
